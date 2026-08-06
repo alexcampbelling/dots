@@ -19,7 +19,6 @@ readonly STOW_PACKAGES=(
 )
 readonly NETWORK_CONFLICT_UNITS=(
   systemd-networkd.service dhcpcd.service connman.service netctl.service wicd.service
-  wpa_supplicant.service
 )
 
 yay_build_dir=""
