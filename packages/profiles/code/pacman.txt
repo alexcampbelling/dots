@@ -1,0 +1,15 @@
+vim
+code
+dbeaver
+nodejs
+npm
+typescript
+yarn
+openssh
+cmake
+fd
+github-cli
+python-pip
+python-pipx
+rustup
+strace

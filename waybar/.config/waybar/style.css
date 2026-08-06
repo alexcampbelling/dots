@@ -1,0 +1,279 @@
+/* Alex Custom Theme — imports centralized design tokens */
+@import url("../theme/tokens.css");
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free";
+    font-size: 14px;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+}
+
+tooltip {
+    background: @bg-tooltip;
+    border-radius: 8px;
+    border: 1px solid @border-hover;
+    transition: none;
+    animation: none;
+    opacity: 1;
+}
+
+tooltip label {
+    padding: 6px 10px;
+    color: @fg-primary;
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free";
+    font-size: 14px;
+    font-weight: normal;
+}
+
+window#waybar {
+    background: @bg-bar;
+}
+
+/* ================================================================
+   Shared shell — every bar module gets the same outline / radius / transition
+   ================================================================ */
+#window,
+#network, #pulseaudio,
+#custom-weather, #custom-whisper, #bluetooth, #battery,
+#clock, #custom-system-icon,
+#custom-screenshot, #custom-media-player,
+#group-hardware {
+    color: @fg-primary;
+    border-radius: 6px;
+    border: 1px solid @border-module;
+    transition: all 0.3s ease;
+}
+
+/* Shared margin + padding for right-side pill modules */
+#network, #pulseaudio,
+#custom-weather, #custom-whisper, #bluetooth, #battery {
+    margin: 0 5px;
+    padding: 0 10px;
+}
+
+/* ================================================================
+   Workspaces / Taskbar  (container + buttons)
+   ================================================================ */
+#workspaces,
+#taskbar {
+    background: @bg-module;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+#workspaces { margin: 0 0px; }
+#taskbar { margin: 0 5px; }
+
+#workspaces button,
+#taskbar button {
+    padding: 0 2px;
+    color: @fg-primary;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#workspaces button {
+    background: transparent;
+    margin: 0 3px;
+    min-width: 20px;
+    padding: 1px 3px;
+    border: 1px solid @border-module;
+}
+
+#taskbar button { margin: 2px; }
+
+#workspaces button:hover,
+#taskbar button:hover {
+    background: @overlay-hover;
+}
+
+#workspaces button:hover { border-color: @border-hover; }
+
+#taskbar button.active { background: @overlay-strong; }
+
+#workspaces button.active {
+    background: transparent;
+    border-color: @border-active;
+}
+
+#workspaces button.urgent {
+    background: @color-urgent;
+    color: @fg-primary;
+}
+
+#workspaces button.special {
+    background: @color-special;
+    color: @fg-special;
+}
+
+#taskbar button.minimized { color: @fg-minimized; }
+#taskbar button.maximized { font-weight: bold; }
+
+#workspaces .workspace-label { padding: 0 2px 0 4px; font-weight: bold; }
+
+#workspaces .taskbar-window {
+    padding: 0 2px;
+    font-weight: normal;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+#workspaces .taskbar-window:hover  { background-color: @overlay-hover; }
+#workspaces .taskbar-window.active { background-color: @overlay-active; }
+
+/* ================================================================
+   Window
+   ================================================================ */
+#window {
+    margin: 0 5px; padding: 0 10px; font-weight: bold;
+    background: @bg-module;
+    border: 1px solid @border-module;
+}
+#window.empty { background: transparent; }
+#window:hover { border-color: @border-hover; }
+
+/* ================================================================
+   Media player
+   ================================================================ */
+#custom-media-player {
+    margin: 0 5px 0 0;
+    padding: 0 10px;
+    font-style: italic;
+    min-height: 24px;
+}
+
+#custom-media-player:hover { border-color: @border-hover; }
+#custom-media-player.playing           { background-color: @color-media-playing; }
+#custom-media-player.paused            { background-color: @color-media-paused; color: @fg-minimized; }
+#custom-media-player.playing-firefox   { background-color: @color-firefox-play; }
+#custom-media-player.paused-firefox    { background-color: @color-firefox-pause; color: @fg-minimized; }
+#custom-media-player.playing-both      { background: linear-gradient(90deg, @color-media-playing 50%, @color-firefox-play 50%); }
+
+#custom-media-player span { margin: 0 5px 0 0; font-style: normal; font-weight: bold; font-size: 16px; }
+
+/* ================================================================
+   Hardware pills (monochrome — opacity-driven like workspaces)
+   ================================================================ */
+#network,
+#pulseaudio,
+#custom-weather,
+#custom-whisper,
+#bluetooth,
+#battery {
+    background-color: @bg-module;
+}
+
+#network:hover,
+#pulseaudio:hover,
+#custom-weather:hover,
+#custom-whisper:hover,
+#bluetooth:hover,
+#battery:hover {
+    background-color: @bg-hover;
+    border-color: @border-hover;
+}
+
+#custom-weather { margin: 0 3px 0 5px; font-weight: bold; }
+
+#custom-whisper { margin: 0 3px; font-size: 16px; min-width: 28px }
+#custom-whisper.inactive   { color: @fg-inactive; padding: 0px 7px 0px 0px; }
+#custom-whisper.recording  { color: @color-recording; background-color: @color-recording-bg; border-color: @color-recording-bd; }
+#custom-whisper.transcribing { color: @color-transcribing; background-color: @color-transcribe-bg; border-color: @color-transcribe-bd; }
+#custom-whisper.error      { color: @fg-minimized; }
+
+/* state variants (monochrome — opacity differences only) */
+#network.disconnected,
+#pulseaudio.muted,
+#bluetooth.disabled, #bluetooth.off {
+    color: @fg-muted;
+}
+
+#pulseaudio.muted:hover { background-color: @bg-hover; }
+
+#battery.warning         { border-color: @border-warning; }
+#battery.warning:hover   { background-color: @bg-hover; }
+#battery.critical        { background-color: @bg-critical; border-color: @border-critical; }
+#battery.critical:hover  { background-color: @bg-hover; }
+
+/* ================================================================
+   Clock / System icon
+   ================================================================ */
+#clock { padding: 0 10px; font-weight: bold; }
+#custom-system-icon { padding: 1px 6px 3px 6px; font-size: 16px; min-width: 18px; }
+
+#clock,
+#custom-system-icon {
+    background-color: @bg-module;
+    margin: 0 3px;
+}
+
+#clock:hover,
+#custom-system-icon:hover {
+    background-color: @bg-hover;
+    border-color: @border-hover;
+}
+
+/* ================================================================
+   Screenshot
+   ================================================================ */
+#custom-screenshot {
+    background-color: @bg-module;
+    padding: 0 8px;
+    margin: 0 3px;
+    font-size: 16px;
+}
+
+#custom-screenshot:hover {
+    background-color: @bg-hover;
+    border-color: @border-hover;
+}
+
+/* ================================================================
+   Group: hardware drawer
+   ================================================================ */
+#group-hardware {
+    margin: 0 5px;
+    padding: 0 10px;
+    background-color: @bg-module;
+}
+
+#group-hardware:hover {
+    background-color: @bg-hover;
+    border-color: @border-hover;
+}
+
+#group-hardware .modules-right { background: transparent; }
+
+/* strip outline from children inside the group (group parent owns it) */
+#group-hardware #network,
+#group-hardware #pulseaudio,
+#group-hardware #battery,
+#group-hardware #bluetooth {
+    margin: 0 2px;
+    border: none;
+}
+
+/* ================================================================
+   Menus
+   ================================================================ */
+menu {
+    background: @bg-tooltip;
+    border-radius: 8px;
+    padding: 2px;
+    margin-top: 5px;
+    border: none;
+    box-shadow: none;
+    outline: none;
+}
+
+menuitem {
+    padding: 6px 10px;
+    color: @fg-primary;
+    border-radius: 4px;
+    margin: 2px;
+}
+
+menuitem:hover { background: rgba(255, 255, 255, 0.15); }

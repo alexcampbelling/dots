@@ -1,0 +1,106 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Rofi Screenshot Menu — Alex Monochrome Theme
+   3x2 grid: copy actions on top row, save actions on bottom row.
+   Bound to Print via Hyprland keybind.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Configuration ─────────────────────────────────────────────────────── */
+configuration {
+    modi:                       "drun,filebrowser,window,run";
+    show-icons:                 false;
+    hover-select:               true;
+    scroll-method:              0;
+    me-select-entry:            "";
+    me-accept-entry:            "MousePrimary";
+    kb-row-left:                "";
+    kb-row-right:               "";
+}
+
+/* ── Inherit monochrome design tokens ──────────────────────────────────── */
+@import "~/.config/theme/tokens.rasi"
+
+/* ── Global ────────────────────────────────────────────────────────────── */
+window {
+    width:                      56em;
+    location:                   center;
+    anchor:                     center;
+    border:                     1px;
+    border-color:               @border-module;
+    background-color:           @bg-bar;
+    border-radius:              @radius-md;
+}
+
+mainbox {
+    orientation:                vertical;
+    children:                   [ "listbox" ];
+    background-color:           transparent;
+}
+
+listbox {
+    orientation:                vertical;
+    children:                   [ "listview" ];
+    background-color:           transparent;
+}
+
+/* ── 3x2 Grid ──────────────────────────────────────────────────────────── */
+listview {
+    padding:                    8px 8px;
+    spacing:                    6px;
+    lines:                      2;
+    columns:                    3;
+    cycle:                      false;
+    dynamic:                    false;
+    scrollbar:                  false;
+    fixed-height:               true;
+    expand:                     true;
+    background-color:           transparent;
+}
+
+/* ── Square Tiles — all items share bg-module, hover/selection shifts opacity ─ */
+element {
+    padding:                    10px 10px;
+    margin:                     2px;
+    border-radius:              @radius-md;
+    border:                     none;
+    expand:                     true;
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color:           @bg-module;
+    text-color:                 @fg-primary;
+}
+
+element normal.hover,
+element alternate.hover {
+    background-color:           @bg-hover;
+    text-color:                 @fg-primary;
+}
+
+element selected.normal {
+    background-color:           @overlay-active;
+    text-color:                 @fg-primary;
+}
+
+element selected.hover {
+    background-color:           @overlay-strong;
+    text-color:                 @fg-primary;
+}
+
+element-text {
+    horizontal-align:           0.5;
+    vertical-align:             0.5;
+    font:                       "JetBrainsMono Nerd Font 13";
+}
+
+/* ── Error ─────────────────────────────────────────────────────────────── */
+error-message {
+    children:                   [ "textbox" ];
+    background-color:           @bg-tooltip;
+}
+
+textbox {
+    vertical-align:             0.5;
+    horizontal-align:           0.5;
+    text-color:                 @fg-muted;
+}

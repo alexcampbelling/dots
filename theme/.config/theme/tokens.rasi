@@ -1,0 +1,44 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Rofi Monochrome Base Theme — ~/.config/theme/tokens.rasi
+
+   Import this in every .rasi file to inherit the monochrome design system.
+   Colours match the central tokens.css; rgba() values copied verbatim.
+   No pywal, no wallpaper — pure black/white/opacity monochrome.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+* {
+    /* ── Typography ─────────────────────────────────────────────────── */
+    font:                       "JetBrainsMono Nerd Font 14";
+
+    /* ── Backgrounds ────────────────────────────────────────────────── */
+    bg-bar:                     rgba(0, 0, 0, 0.7);
+    bg-module:                  rgba(0, 0, 0, 0.3);
+    bg-hover:                   rgba(0, 0, 0, 0.5);
+    bg-critical:                rgba(0, 0, 0, 0.55);
+    bg-tooltip:                 rgba(40, 40, 40, 0.95);
+
+    /* ── Foregrounds ────────────────────────────────────────────────── */
+    fg-primary:                 #FFFFFF;
+    fg-muted:                   rgba(255, 255, 255, 0.5);
+    fg-inactive:                rgba(255, 255, 255, 0.25);
+    fg-minimized:               rgba(255, 255, 255, 0.7);
+
+    /* ── Borders ────────────────────────────────────────────────────── */
+    border-module:              rgba(255, 255, 255, 0.09);
+    border-hover:               rgba(255, 255, 255, 0.2);
+    border-active:              rgba(255, 255, 255, 0.11);
+
+    /* ── Interactive Overlays ───────────────────────────────────────── */
+    overlay-hover:              rgba(255, 255, 255, 0.1);
+    overlay-active:             rgba(255, 255, 255, 0.18);
+    overlay-strong:             rgba(255, 255, 255, 0.2);
+
+    /* ── Semantic Colours ───────────────────────────────────────────── */
+    color-urgent:               rgba(220, 60, 60, 0.5);
+    color-special:              rgba(30, 215, 96, 0.2);
+
+    /* ── Radius ─────────────────────────────────────────────────────── */
+    radius-sm:                  4px;
+    radius-md:                  6px;
+    radius-lg:                  8px;
+}

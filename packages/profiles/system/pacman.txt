@@ -1,0 +1,22 @@
+# Core Arch system, networking, and command-line utilities.
+base
+base-devel
+linux
+linux-firmware
+btrfs-progs
+efibootmgr
+sudo
+zram-generator
+git
+stow
+networkmanager
+iwd
+nm-connection-editor
+nftables
+ufw
+avahi
+nano
+less
+lsof
+7zip
+tailscale

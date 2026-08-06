@@ -1,0 +1,5 @@
+# Each package is offered individually when --profile optional is selected.
+obsidian
+syncthing
+spotify-launcher
+steam

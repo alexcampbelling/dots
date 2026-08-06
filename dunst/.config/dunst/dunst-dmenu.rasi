@@ -1,0 +1,89 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Dunst dmenu theme — compact action picker, monochrome design tokens
+   Used by dunst when do_action / context_menu fires via rofi -dmenu.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+configuration {
+    show-icons:                 false;
+    hover-select:               true;
+    scroll-method:              0;
+    me-select-entry:            "";
+    me-accept-entry:            "MousePrimary";
+    kb-row-left:                "";
+    kb-row-right:               "";
+}
+
+@import "~/.config/theme/tokens.rasi"
+
+window {
+    location:                   center;
+    anchor:                     center;
+    width:                      24em;
+    border:                     1px;
+    border-color:               @border-module;
+    background-color:           @bg-tooltip;
+    border-radius:              @radius-md;
+    padding:                    4px;
+}
+
+mainbox {
+    orientation:                vertical;
+    children:                   [ "listbox" ];
+    background-color:           transparent;
+}
+
+listbox {
+    orientation:                vertical;
+    children:                   [ "listview" ];
+    background-color:           transparent;
+}
+
+listview {
+    padding:                    4px;
+    spacing:                    2px;
+    lines:                      8;
+    columns:                    1;
+    cycle:                      false;
+    dynamic:                    false;
+    scrollbar:                  false;
+    fixed-height:               false;
+    background-color:           transparent;
+}
+
+element {
+    padding:                    6px 10px;
+    border-radius:              @radius-sm;
+    border:                     none;
+    font:                       "JetBrainsMono Nerd Font 12";
+}
+
+element normal.normal {
+    background-color:           transparent;
+    text-color:                 @fg-muted;
+}
+
+element selected.normal {
+    background-color:           @overlay-active;
+    text-color:                 @fg-primary;
+}
+
+element alternate.normal {
+    background-color:           transparent;
+    text-color:                 @fg-muted;
+}
+
+element-text {
+    horizontal-align:           0.0;
+    vertical-align:             0.5;
+}
+
+error-message {
+    children:                   [ "textbox" ];
+    background-color:           @bg-tooltip;
+}
+
+textbox {
+    vertical-align:             0.5;
+    horizontal-align:           0.5;
+    text-color:                 @fg-muted;
+}

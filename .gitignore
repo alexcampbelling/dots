@@ -1,0 +1,26 @@
+# Per-computer Hyprland monitor layout, seeded from monitors.conf.example.
+/hypr/.config/hypr/conf/monitors.conf
+
+# Local environment files can contain credentials and must not be committed.
+.env
+
+# Variant environment files can contain credentials and must not be committed.
+.env.*
+
+# Keep documented environment-file templates under version control.
+!.env.example
+
+# Vim swap files are transient editor recovery data.
+*.swp
+
+# Editor backup files are transient local copies.
+*~
+
+# Python bytecode files are generated at runtime.
+*.pyc
+
+# Python bytecode caches are generated at runtime.
+__pycache__/
+
+# macOS Finder metadata is local machine state.
+.DS_Store

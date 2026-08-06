@@ -1,0 +1,77 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Design Tokens — Central Theme System  (GTK3 / Waybar compatible)
+
+   Uses @define-color (GTK3/Waybar variable syntax), not CSS custom props.
+   Waybar imports this directly; every value change propagates on restart.
+
+   Apps with their own config format (Dunst, Rofi, Hyprlock) mirror the
+   same token values manually using their native syntax (hex, rgba).
+   Non-color tokens (font, radius, spacing) are documented below and kept
+   in sync manually across each app's config.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Backgrounds ────────────────────────────────────────────────────────── */
+@define-color bg-bar       rgba(0, 0, 0, 0.7);        /* main bar surface            */
+@define-color bg-module    rgba(0, 0, 0, 0.3);        /* module pills                */
+@define-color bg-hover     rgba(0, 0, 0, 0.5);        /* pill hover (darken)         */
+@define-color bg-critical  rgba(0, 0, 0, 0.55);       /* battery critical            */
+@define-color bg-tooltip   rgba(40, 40, 40, 0.95);    /* tooltips & menus            */
+
+/* ── Foregrounds ────────────────────────────────────────────────────────── */
+@define-color fg-primary    #FFFFFF;
+@define-color fg-muted      rgba(255, 255, 255, 0.5);   /* disconnected / muted      */
+@define-color fg-inactive   rgba(255, 255, 255, 0.25);  /* whisper idle              */
+@define-color fg-minimized  rgba(255, 255, 255, 0.7);   /* taskbar minimized         */
+@define-color fg-special    rgba(255, 255, 255, 0.9);   /* special workspace         */
+
+/* ── Borders ────────────────────────────────────────────────────────────── */
+@define-color border-module   rgba(255, 255, 255, 0.09);
+@define-color border-hover    rgba(255, 255, 255, 0.2);
+@define-color border-active   rgba(255, 255, 255, 0.11);
+@define-color border-warning  rgba(255, 255, 255, 0.18);
+@define-color border-critical rgba(255, 255, 255, 0.28);
+
+/* ── Interactive Overlays ───────────────────────────────────────────────── */
+@define-color overlay-hover   rgba(255, 255, 255, 0.1);   /* hover highlight          */
+@define-color overlay-active  rgba(255, 255, 255, 0.18);  /* active / selected        */
+@define-color overlay-strong  rgba(255, 255, 255, 0.2);   /* taskbar.active           */
+
+/* ── Semantic Accent Colours ────────────────────────────────────────────── */
+/* These may be overridden by PyWal via tokens-override.css (future).        */
+@define-color color-urgent        rgba(220, 60, 60, 0.5);
+@define-color color-recording     #ff4444;
+@define-color color-recording-bg  rgba(255, 68, 68, 0.15);
+@define-color color-recording-bd  rgba(255, 68, 68, 0.3);
+@define-color color-transcribing  #ffaa00;
+@define-color color-transcribe-bg rgba(255, 170, 0, 0.15);
+@define-color color-transcribe-bd rgba(255, 170, 0, 0.3);
+@define-color color-special       rgba(30, 215, 96, 0.2);
+@define-color color-media-playing rgba(30, 215, 96, 0.5);
+@define-color color-media-paused  rgba(30, 215, 96, 0.3);
+@define-color color-firefox-play  rgba(220, 60, 60, 0.5);
+@define-color color-firefox-pause rgba(180, 40, 40, 0.3);
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Non-Color Tokens  (documented — sync manually across app configs)
+   ═══════════════════════════════════════════════════════════════════════════
+
+   Typography:
+     font-family        "JetBrainsMono Nerd Font"
+     font-size          14px
+     font-size-icon     16px
+
+   Spacing:
+     spacing-xs         2px
+     spacing-sm         3px
+     spacing-md         5px
+     spacing-lg         10px
+
+   Border Radius:
+     radius-sm          4px
+     radius-md          6px
+     radius-lg          8px
+
+   Transitions:
+     transition-fast    all 0.2s ease
+     transition-default all 0.3s ease
+   ═══════════════════════════════════════════════════════════════════════════ */

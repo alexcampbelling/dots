@@ -1,0 +1,3 @@
+# Each package is offered individually when --profile optional is selected.
+vesktop-bin
+runelite

@@ -1,0 +1,103 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dunst — Alex Monochrome Theme
+# Design tokens mirrored from ~/.config/theme/tokens.css
+# ═══════════════════════════════════════════════════════════════════════════
+
+[global]
+    ### ── Geometry ───────────────────────────────────────────────────── ###
+    monitor = 0
+    follow = mouse
+    width = 280
+    height = (0, 180)
+    origin = top-right
+    offset = (12, 12)
+    scale = 0
+
+    ### ── Progress ───────────────────────────────────────────────────── ###
+    progress_bar = true
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
+    progress_bar_min_width = 150
+    progress_bar_max_width = 300
+    progress_bar_corner_radius = 2
+
+    ### ── Icons ──────────────────────────────────────────────────────── ###
+    icon_position = left
+    max_icon_size = 24
+    icon_corner_radius = 4
+    icon_theme = Tela-circle-dracula
+
+    ### ── Behaviour ──────────────────────────────────────────────────── ###
+    indicate_hidden = yes
+    shrink = no
+    transparency = 0
+    separator_height = 1
+    padding = 8
+    horizontal_padding = 10
+    text_icon_padding = 8
+    frame_width = 1
+    separator_color = frame
+    sort = yes
+    idle_threshold = 0
+    line_height = 0
+    markup = full
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = -1
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = true
+    show_indicators = yes
+    sticky_history = yes
+    history_length = 20
+    dmenu = rofi -dmenu -p "" -config ~/.config/dunst/dunst-dmenu.rasi
+    browser = firefox -new-tab
+    always_run_script = true
+    title = Dunst
+    class = Dunst
+    corner_radius = 6
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_all
+    mouse_right_click = close_all
+
+    ### ── Typography ─────────────────────────────────────────────────── ###
+    font = "JetBrainsMono Nerd Font" 10
+
+    ### ── Shared defaults (overridden per urgency) ───────────────────── ###
+    background = "#1E1E1EEE"
+    foreground = "#CCCCCC"
+    frame_color = "#FFFFFF17"
+    timeout = 6
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Urgency Levels — same background opacity, titles colored to signify level
+# ═══════════════════════════════════════════════════════════════════════════
+
+[urgency_low]
+    background = "#1E1E1EEE"
+    frame_color = "#FFFFFF10"
+    timeout = 4
+    format = "<b><span color='#888888'>%s</span></b>\n<span color='#999999'>%b</span>"
+
+[urgency_normal]
+    background = "#1E1E1EEE"
+    frame_color = "#FFFFFF17"
+    timeout = 6
+    format = "<b><span color='#FFFFFF'>%s</span></b>\n<span color='#BBBBBB'>%b</span>"
+
+[urgency_critical]
+    background = "#1E1E1EEE"
+    frame_color = "#FFFFFF2E"
+    timeout = 0
+    format = "<b><span color='#FF8888'>%s</span></b>\n<span color='#BBBBBB'>%b</span>"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Per-app overrides
+# ═══════════════════════════════════════════════════════════════════════════
+
+# [spotify]
+#     appname = Spotify
+#     background = "#1DB9544D"
+#     foreground = "#FFFFFF"
+#     frame_color = "#1DB95433"

@@ -1,0 +1,3 @@
+sddm-silent-theme
+vicinae-bin
+waypaper
