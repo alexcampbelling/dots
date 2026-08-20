@@ -10,7 +10,6 @@ zram-generator
 git
 stow
 networkmanager
-iwd
 nm-connection-editor
 nftables
 ufw

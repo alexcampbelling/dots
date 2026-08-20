@@ -80,7 +80,10 @@ Choices I like:
 - **Profile:** `Minimal`. We want to set up a DE/WM later.
 - **Applications:** Enable PipeWire. The dots installer will ask before enabling
   Bluetooth, printing, UFW, and other system services.
-- **Network configuration:** `Network Manager (iwd backend)`
+- **Network configuration:** `NetworkManager` (plain, not the "iwd backend"
+  variant — NetworkManager's default wpa_supplicant backend is installed and
+  enabled as a dependency, so choose the non-iwd option to avoid an idle,
+  unused iwd daemon)
 
 Reboot into the new system and sign in at the terminal.
 
