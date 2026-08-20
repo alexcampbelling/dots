@@ -10,6 +10,20 @@ Interesting parts:
 - Local voice dictation scripts
 - Pithy waybar and keybinded scripts
 
+## Tools
+
+TUI/CLI tools and scripts these dots ship, to remind me what is there:
+
+- `nmcli` — scan and join Wi-Fi from a terminal:
+  ```bash
+  nmcli device wifi list                     # scan for networks
+  nmcli device wifi connect "<SSID>"         # prompts for password
+  ```
+- `btop` — system monitor: CPU, RAM, disks, network
+- `lazygit` — git in a TUI
+- `bat` — a prettier `cat` (syntax highlighting, line numbers)
+- `idle-pause.sh 15` — pause hypridle's lock/suspend for N minutes (15 = 15 min), auto-resumes; run from `~/.config/hypr/scripts/`
+
 ## Fresh installation
 
 ### 0. Prepare a boot USB on another computer
