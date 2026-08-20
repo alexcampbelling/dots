@@ -14,11 +14,11 @@ Interesting parts:
 
 TUI/CLI tools and scripts these dots ship, to remind me what is there:
 
-- `nmcli` — scan and join Wi-Fi from a terminal:
-  ```bash
-  nmcli device wifi list                     # scan for networks
-  nmcli device wifi connect "<SSID>"         # prompts for password
-  ```
+- `nmtui` — NetworkManager's text menu; scan and join Wi-Fi interactively
+  without remembering nmcli syntax: `nmtui` > "Activate a connection"
+- `vicinae` — app launcher (Super+Space) that doubles as a Wi-Fi chooser when
+  its network backend is `nmcli` (`"network-cli-tool": "nmcli"` in
+  `~/.config/vicinae/settings.json`)
 - `btop` — system monitor: CPU, RAM, disks, network
 - `lazygit` — git in a TUI
 - `bat` — a prettier `cat` (syntax highlighting, line numbers)
