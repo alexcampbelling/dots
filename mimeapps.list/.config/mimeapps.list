@@ -1,5 +1,16 @@
-
 [Default Applications]
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+x-scheme-handler/chrome=firefox.desktop
+x-scheme-handler/mailto=firefox.desktop
+text/html=firefox.desktop
 x-scheme-handler/discord-409416265891971072=discord-409416265891971072.desktop
 x-scheme-handler/discord=vesktop.desktop
 x-scheme-handler/codex=codex-desktop.desktop
+
+[Added Associations]
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+x-scheme-handler/chrome=firefox.desktop
+x-scheme-handler/mailto=firefox.desktop
+text/html=firefox.desktop
