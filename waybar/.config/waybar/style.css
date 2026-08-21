@@ -40,6 +40,7 @@ window#waybar {
 #custom-weather, #custom-whisper, #bluetooth, #battery,
 #clock, #custom-system-icon,
 #custom-screenshot, #custom-media-player,
+#custom-opencode-perm, #custom-opencode-question,
 #group-hardware {
     color: @fg-primary;
     border-radius: 6px;
@@ -49,7 +50,8 @@ window#waybar {
 
 /* Shared margin + padding for right-side pill modules */
 #network, #pulseaudio,
-#custom-weather, #custom-whisper, #bluetooth, #battery {
+#custom-weather, #custom-whisper, #bluetooth, #battery,
+#custom-opencode-perm, #custom-opencode-question {
     margin: 0 5px;
     padding: 0 10px;
 }
@@ -183,6 +185,36 @@ window#waybar {
 #custom-whisper.recording  { color: @color-recording; background-color: @color-recording-bg; border-color: @color-recording-bd; }
 #custom-whisper.transcribing { color: @color-transcribing; background-color: @color-transcribe-bg; border-color: @color-transcribe-bd; }
 #custom-whisper.error      { color: @fg-minimized; }
+
+/* ================================================================
+   OpenCode permission / question queue
+   ================================================================ */
+#custom-opencode-perm,
+#custom-opencode-question {
+    background-color: @bg-module;
+    font-weight: bold;
+    min-width: 28px;
+}
+
+#custom-opencode-perm:hover,
+#custom-opencode-question:hover {
+    background-color: @bg-hover;
+    border-color: @border-hover;
+}
+
+#custom-opencode-perm { color: @color-perm-pending; }
+#custom-opencode-question { color: @color-question; }
+
+/* Collapse to nothing when none of that kind are pending. */
+#custom-opencode-perm.empty,
+#custom-opencode-question.empty {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    border: none;
+    background: transparent;
+}
 
 /* state variants (monochrome — opacity differences only) */
 #network.disconnected,

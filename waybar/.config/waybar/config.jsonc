@@ -14,6 +14,8 @@
     "modules-right": [
         "group/hardware",
         "custom/whisper",
+        "custom/opencode-perm",
+        "custom/opencode-question",
         "battery",
         "custom/weather",
         "clock"

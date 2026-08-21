@@ -53,6 +53,22 @@
         "return-type": "json",
         "on-click": "xdg-open https://www.bom.gov.au/location/australia/victoria/central/o2141206946-kensington && sleep 0.1 && hyprctl dispatch focuswindow class:firefox"
     },
+    "custom/opencode-perm": {
+        "format": "{}",
+        "tooltip": true,
+        "return-type": "json",
+        "interval": 1,
+        "exec": "~/.config/waybar/scripts/opencode-perm.sh perm",
+        "on-click": "~/.config/waybar/scripts/opencode-perm-click.sh perm"
+    },
+    "custom/opencode-question": {
+        "format": "{}",
+        "tooltip": true,
+        "return-type": "json",
+        "interval": 1,
+        "exec": "~/.config/waybar/scripts/opencode-perm.sh question",
+        "on-click": "~/.config/waybar/scripts/opencode-perm-click.sh question"
+    },
     "bluetooth": {
         "format": "󰂯 {status}",
         "format-disabled": "󰂲",
