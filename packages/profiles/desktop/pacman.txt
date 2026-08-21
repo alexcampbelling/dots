@@ -54,6 +54,7 @@ ttf-nerd-fonts-symbols
 adwaita-fonts
 adwaita-icon-theme
 adwaita-cursors
+papirus-icon-theme
 bat
 btop
 htop

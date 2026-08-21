@@ -25,7 +25,8 @@
     icon_position = left
     max_icon_size = 24
     icon_corner_radius = 4
-    icon_theme = Tela-circle-dracula
+    enable_recursive_icon_lookup = true
+    icon_theme = AlexIcons, Papirus, Adwaita
 
     ### ── Behaviour ──────────────────────────────────────────────────── ###
     indicate_hidden = yes

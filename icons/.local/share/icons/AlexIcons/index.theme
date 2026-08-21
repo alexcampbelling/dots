@@ -1,0 +1,12 @@
+[Icon Theme]
+Name=AlexIcons
+Comment=Personal icon overrides layered on top of Papirus
+Inherits=Papirus
+Directories=scalable/apps
+
+[scalable/apps]
+Size=128
+MinSize=16
+MaxSize=256
+Type=Scalable
+Context=Applications

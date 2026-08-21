@@ -22,10 +22,7 @@ TUI/CLI tools and scripts these dots ship, to remind me what is there:
 - `btop` — system monitor: CPU, RAM, disks, network
 - `lazygit` — git in a TUI
 - `bat` — a prettier `cat` (syntax highlighting, line numbers)
-- `idle-pause.sh 15` — pause hypridle's lock/suspend for N minutes (15 = 15 min), auto-resumes; run from `~/.config/hypr/scripts/`
-- `opencode-perm` — Waybar `● N` (perms) / `◆ N` (questions) for opencode's
-  pending interrupts; click to focus the oldest waiting Kitty window and cycle.
-  Opt-in dunst ping: `NOTIFY_ON_FIRST_ASK` in the plugin.
+- `idle-pause.sh 15` — pause hypridle's lock/suspend for N minutes (15 = 15 min), auto-resumes; a vicinae script command (Super+Space → search "idle"), uses `systemd-inhibit` so idle restarts cleanly on resume; pair with the `Cancel Idle Pause` vicinae command to end it early
 - `gitleaks` — secret scanner; the repo's pre-push hook (`.githooks/pre-push`) runs it on every push and blocks secrets from reaching GitHub unless you explicitly type `I understand` to override
 
 ## Fresh installation

@@ -14,7 +14,7 @@ readonly DEFAULT_WALLPAPER="$REPO_ROOT/assets/wallpapers/pillars.jpg"
 readonly SDDM_INSTALLER="$REPO_ROOT/sddm-silent/install.sh"
 readonly SDDM_DROP_IN_TEMPLATE="$REPO_ROOT/sddm-silent/configs/90-dots-silent.conf"
 readonly STOW_PACKAGES=(
-  bash dunst fontconfig gtk-3.0 hypr kitty lazygit mimeapps.list
+  bash dunst fontconfig gtk-3.0 hypr icons kitty lazygit mimeapps.list
   rofi theme Thunar vicinae waybar waypaper xfce4
 )
 readonly NETWORK_CONFLICT_UNITS=(
@@ -584,6 +584,25 @@ configure_gnome_dark_mode() {
   printf '    GNOME dark mode: could not save the GSettings preference; run: gsettings set org.gnome.desktop.interface color-scheme prefer-dark\n' >&2
 }
 
+configure_gnome_icon_theme() {
+  if ! command -v gsettings >/dev/null 2>&1; then
+    printf '    GNOME icon theme: skipped because gsettings is unavailable\n'
+    return
+  fi
+
+  log "Setting the system icon theme to AlexIcons (overrides Papirus)"
+  if gsettings set org.gnome.desktop.interface icon-theme AlexIcons 2>/dev/null; then
+    return
+  fi
+
+  if command -v dbus-run-session >/dev/null 2>&1 \
+    && dbus-run-session -- gsettings set org.gnome.desktop.interface icon-theme AlexIcons; then
+    return
+  fi
+
+  printf '    GNOME icon theme: could not save the GSettings preference; run: gsettings set org.gnome.desktop.interface icon-theme AlexIcons\n' >&2
+}
+
 unit_enabled_or_active() {
   local unit="$1"
   systemctl is-enabled --quiet "$unit" 2>/dev/null || systemctl is-active --quiet "$unit" 2>/dev/null
@@ -725,6 +744,7 @@ main() {
   deploy_configs
   configure_git_secret_hooks
   configure_gnome_dark_mode
+  configure_gnome_icon_theme
 
   # SDDM is system-wide, so its selected theme is a managed /etc drop-in rather
   # than a Stowed user config. Existing monolithic SDDM config is preserved.
