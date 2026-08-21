@@ -15,10 +15,11 @@ readonly SDDM_INSTALLER="$REPO_ROOT/sddm-silent/install.sh"
 readonly SDDM_DROP_IN_TEMPLATE="$REPO_ROOT/sddm-silent/configs/90-dots-silent.conf"
 readonly STOW_PACKAGES=(
   bash dunst fontconfig gtk-3.0 hypr kitty lazygit mimeapps.list
-  rofi theme Thunar waybar waypaper xfce4
+  rofi theme Thunar vicinae waybar waypaper xfce4
 )
 readonly NETWORK_CONFLICT_UNITS=(
   systemd-networkd.service dhcpcd.service connman.service netctl.service wicd.service
+  iwd.service
 )
 
 yay_build_dir=""
@@ -305,6 +306,9 @@ print_dry_run() {
   if contains rustup "${pacman_packages[@]}"; then
     printf '    Rustup: configure stable as the default toolchain only when none is configured.\n'
   fi
+  if [[ -f "$REPO_ROOT/.githooks/pre-push" ]]; then
+    printf '    Gitleaks hook: point core.hooksPath at .githooks so pushes are scanned for secrets.\n'
+  fi
 }
 
 prompt_yes_no() {
@@ -544,6 +548,23 @@ deploy_configs() {
   stow --restow --no-folding --dir "$REPO_ROOT" --target "$HOME" "${stow_packages[@]}"
 }
 
+configure_git_secret_hooks() {
+  local pre_push_hook="$REPO_ROOT/.githooks/pre-push"
+
+  [[ -f "$pre_push_hook" ]] || return 0
+
+  if [[ "$(git config --get core.hooksPath 2>/dev/null || true)" != ".githooks" ]]; then
+    log "Enabling gitleaks pre-push hook"
+    git config core.hooksPath .githooks
+  fi
+
+  if command -v gitleaks >/dev/null 2>&1; then
+    printf '    Gitleaks: active; pushes are scanned for secrets unless the hook is overridden.\n'
+  else
+    printf '    Gitleaks: hook active but gitleaks is not installed; install it with "sudo pacman -S gitleaks".\n'
+  fi
+}
+
 configure_gnome_dark_mode() {
   if ! command -v gsettings >/dev/null 2>&1; then
     printf '    GNOME dark mode: skipped because gsettings is unavailable\n'
@@ -575,7 +596,7 @@ assert_no_network_manager_conflicts() {
   for unit in "${NETWORK_CONFLICT_UNITS[@]}"; do
     unit_enabled_or_active "$unit" && conflicts+=("$unit")
   done
-  ((${#conflicts[@]} == 0)) || die "Resolve competing network managers before continuing: ${conflicts[*]}"
+  ((${#conflicts[@]} == 0)) || die "Resolve competing or leftover network services before continuing: ${conflicts[*]} (NetworkManager is the intended manager; iwd.service means archinstall used the 'iwd backend' option and left a stray daemon — disable it with 'sudo systemctl disable --now iwd')"
 }
 
 ensure_service_enabled() {
@@ -702,6 +723,7 @@ main() {
   seed_monitor_config
   prepare_whisper_key_directory
   deploy_configs
+  configure_git_secret_hooks
   configure_gnome_dark_mode
 
   # SDDM is system-wide, so its selected theme is a managed /etc drop-in rather

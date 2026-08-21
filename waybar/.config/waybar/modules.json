@@ -112,8 +112,7 @@
         "tooltip-format": "{ifname}: {ipaddr}/{cidr}\nGateway: {gwaddr}\nUp: {bandwidthUpBits}\nDown: {bandwidthDownBits}",
         "tooltip-format-wifi": "{essid}\nQuality: {signalStrength}%\nIP: {ipaddr}/{cidr}\nFrequency: {frequency} GHz\nUp: {bandwidthUpBits}\nDown: {bandwidthDownBits}",
         "tooltip-format-disconnected": "Disconnected",
-        "interval": 1,
-        "on-click": "nm-connection-editor"
+        "interval": 1
     },
     "group/hardware": {
         "orientation": "horizontal",

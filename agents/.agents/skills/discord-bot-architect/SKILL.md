@@ -1100,7 +1100,7 @@ Recommended fix:
 
 ```javascript
 // BAD - never do this
-const token = 'MTIzNDU2Nzg5MDEyMzQ1Njc4.ABCDEF.xyz...';
+const token = 'MTIzNDU2Nzg5MDEyMzQ1Njc4.ABCDEF.xyz...'; // gitleaks:allow (example placeholder)
 
 // GOOD - environment variables
 require('dotenv').config();

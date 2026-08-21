@@ -23,6 +23,7 @@ TUI/CLI tools and scripts these dots ship, to remind me what is there:
 - `lazygit` — git in a TUI
 - `bat` — a prettier `cat` (syntax highlighting, line numbers)
 - `idle-pause.sh 15` — pause hypridle's lock/suspend for N minutes (15 = 15 min), auto-resumes; run from `~/.config/hypr/scripts/`
+- `gitleaks` — secret scanner; the repo's pre-push hook (`.githooks/pre-push`) runs it on every push and blocks secrets from reaching GitHub unless you explicitly type `I understand` to override
 
 ## Fresh installation
 
@@ -56,6 +57,10 @@ station wlan0 get-networks           # list them
 station wlan0 connect "<SSID>"       # prompts for password
 exit
 ```
+
+`iwctl` is the client for `iwd`, and it only exists in this live-USB
+environment. It is not installed on the finished system — after installation,
+NetworkManager (with its default wpa_supplicant backend) takes over Wi-Fi.
 
 Or check ethernet with `ip link`.
 
@@ -145,6 +150,8 @@ The installer:
 - Updates the system and installs packages from the selected profiles
 - Installs Yay when AUR packages are required
 - Deploys dotfiles to the home directory with Stow
+- Enables the gitleaks pre-push hook (`.githooks/pre-push`) so git pushes are
+  scanned for secrets before they reach GitHub
 - Sets up Hyprland
 - Sets the GNOME/GTK4 colour preference to dark for Text Editor and similar apps
 - Automatically selects the SilentSDDM theme when safe to do so

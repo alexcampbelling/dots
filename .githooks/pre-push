@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# pre-push hook: block pushes that contain potential secrets (gitleaks)
+# Reads the refs being pushed from stdin: <local ref> <local sha> <remote ref> <remote sha>
+
+set -uo pipefail
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-push: gitleaks not installed, skipping secret scan" >&2
+  exit 0
+fi
+
+zero="0000000000000000000000000000000000000000"
+leaks_found=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -z "$local_ref" ] && continue
+  [[ "$local_ref" != refs/heads/* && "$local_ref" != refs/tags/* ]] && continue
+  # deleting a branch, nothing to scan
+  [ "$local_sha" = "$zero" ] && continue
+
+  if [ "$remote_sha" = "$zero" ] || [ -z "$remote_sha" ]; then
+    # pushing a new branch: scan everything not already on origin
+    base=$(git merge-base --fork-point origin/HEAD "$local_sha" 2>/dev/null || true)
+    [ -z "$base" ] && base=$(git merge-base origin/HEAD "$local_sha" 2>/dev/null || true)
+    if [ -z "$base" ]; then
+      echo "pre-push: no origin/HEAD found, cannot determine push range, skipping" >&2
+      continue
+    fi
+    range="${base}..${local_sha}"
+  else
+    range="${remote_sha}..${local_sha}"
+  fi
+
+  commit_count=$(git rev-list --count "$range" 2>/dev/null || echo 0)
+  [ "$commit_count" -eq 0 ] && continue
+
+  echo "pre-push: scanning $commit_count commit(s) for secrets..."
+
+  output=$(gitleaks git --no-banner --redact=100 --log-opts="$range" -v . 2>&1)
+  code=$?
+
+  # 0 = clean, anything else = leaks found (or error)
+  if [ "$code" -eq 0 ]; then
+    echo "pre-push: $commit_count commit(s) clean"
+  else
+    leaks_found=1
+    echo ""
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "!!  GITLEAKS FOUND POTENTIAL SECRETS IN YOUR PUSH          !!"
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "$output"
+    echo ""
+  fi
+done < /dev/stdin
+
+if [ "$leaks_found" -ne 0 ]; then
+  if [ "${GITLEAKS_FORCE:=}" = "1" ]; then
+    echo "pre-push: GITLEAKS_FORCE=1, pushing anyway"
+    exit 0
+  fi
+  echo "These commits (including any secrets) are about to be pushed to a REMOTE repository."
+  read -r -p 'Type "I understand" to push anyway, or press Enter/Ctrl-C to abort: ' answer
+  if [ "$answer" != "I understand" ]; then
+    echo "pre-push: push aborted."
+    exit 1
+  fi
+  echo "pre-push: pushing anyway, on your own head be it."
+fi
+
+exit 0

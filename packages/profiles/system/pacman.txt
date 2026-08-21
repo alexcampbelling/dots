@@ -19,3 +19,5 @@ less
 lsof
 7zip
 tailscale
+# Secret scanner used by the .githooks/pre-push hook.
+gitleaks
