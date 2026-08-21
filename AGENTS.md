@@ -9,10 +9,19 @@ anything; keep `README.md` in sync with user-visible changes.
 
 Each stow package is a top-level dir mirroring `$HOME` (e.g.
 `hypr/.config/hypr/…`, `icons/.local/share/…`, or dotfiles like
-`bash/.bash_aliases` directly). Only dirs listed in `STOW_PACKAGES` (top of
-`install.sh`) are stowed: `stow --restow --no-folding --dir . --target $HOME`
-after a `--simulate` preflight. `sddm-silent/` is NOT stowed — its own
-`install.sh` writes a managed `/etc/sddm.conf.d/` drop-in.
+`bash/.bash_aliases` directly). The package list is NOT hand-maintained: every
+top-level dir is a stow package except the structural dirs in `STOW_EXCLUDE`
+(`assets/`, `packages/`, `sddm-silent/`) and hidden dirs. `stow_plan_all()` in
+`stow-plan.sh` derives the list from the filesystem, so adding a package means
+dropping a new top-level dir — no list edit. `install.sh` and `restow.sh` both
+source `stow-plan.sh`.
+
+A package whose app may be absent on a machine lists its required command in
+`STOW_REQUIRES` (`stow-plan.sh`). `restow.sh` skips such a package with a loud
+warning when the command is missing; install it and rerun. `install.sh` stows
+conditional packages only when their `--profile` is resolved AND the command
+is present. `sddm-silent/` is NOT stowed — its own `install.sh` writes a
+managed `/etc/sddm.conf.d/` drop-in.
 
 Package map (one line each):
 
@@ -26,10 +35,17 @@ Package map (one line each):
 | `gtk-3.0/`, `fontconfig/`, `mimeapps.list/` | GTK settings, font config, default apps |
 | `theme/` | `tokens.css` + `tokens.rasi` (shared colors) |
 | `icons/` | AlexIcons icon theme (below) |
-| `opencode/`, `agents/` | OpenCode config + skills; stowed ONLY for `--profile code` and only when `opencode` is installed (gated in `build_stow_plan`) |
+| `opencode/`, `agents/` | OpenCode config + skills; conditional via `STOW_REQUIRES` — skipped with a warning by `restow.sh` unless `opencode` is installed; `install.sh` stows them for `--profile code` when `opencode` is installed |
 | `assets/` | NOT stowed — wallpaper source; `wallpapers/pillars.jpg` is the default, `validate_repository_inputs` dies if missing |
 
 Repo edits apply live through the symlinks (except icons and seeded files).
+
+## Restowing without installing
+
+`restow.sh` re-links every stow package (from `stow-plan.sh`) without touching
+packages, services, or seeded files. Packages whose required command is missing
+are skipped with a warning. Run `bash ./restow.sh` (or `--dry-run`) to sync a
+machine after pulling repo changes.
 
 ## Package profiles
 
@@ -60,7 +76,8 @@ always resolved; `optional`, `code`, `local-whisper` are opt-in via
 Create `packages/profiles/<name>/{pacman,aur}.txt`, add the name to
 `is_supported_profile()` and the `usage()` text in `install.sh`, and describe
 it in `README.md`. Decide: CLI opt-in (default) or always-resolved (add to
-`resolve_profiles()`). Add conditional stow packages in `build_stow_plan()`.
+`resolve_profiles()`). Add conditional stow packages by editing `STOW_REQUIRES`
+in `stow-plan.sh` (and `build_stow_plan()` for the profile gate).
 
 ## install.sh architecture
 
@@ -112,7 +129,8 @@ stowed.
 
 ## Rules
 
-- Validate with `bash -n install.sh` and `bash ./install.sh --dry-run` only.
-  Never run a real install without explicit user approval.
+- Validate with `bash -n install.sh`, `bash -n restow.sh`, and
+  `bash ./install.sh --dry-run` only. Never run a real install without explicit
+  user approval.
 - Confirm profile/package placement and README wording with the user.
 - Don't commit unless asked.

@@ -146,6 +146,19 @@ To inspect a plan without changing anything:
 bash ./install.sh --profile optional --dry-run
 ```
 
+### Restow without installing
+
+To just re-link the dotfiles (for example after pulling repo changes) without
+touching packages, services, or seeded files:
+
+```bash
+bash ./restow.sh
+```
+
+This stows every package. Any package whose app isn't installed on the machine
+is skipped with a warning — install that app, then rerun. `--dry-run` prints
+what would change without doing it.
+
 The installer:
 - Updates the system and installs packages from the selected profiles
 - Installs Yay when AUR packages are required

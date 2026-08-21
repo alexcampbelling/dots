@@ -13,14 +13,13 @@ readonly MONITOR_EXAMPLE="$REPO_ROOT/hypr/.config/hypr/conf/monitors.conf.exampl
 readonly DEFAULT_WALLPAPER="$REPO_ROOT/assets/wallpapers/pillars.jpg"
 readonly SDDM_INSTALLER="$REPO_ROOT/sddm-silent/install.sh"
 readonly SDDM_DROP_IN_TEMPLATE="$REPO_ROOT/sddm-silent/configs/90-dots-silent.conf"
-readonly STOW_PACKAGES=(
-  bash dunst fontconfig gtk-3.0 hypr icons kitty lazygit mimeapps.list
-  rofi theme Thunar vicinae waybar waypaper xfce4
-)
 readonly NETWORK_CONFLICT_UNITS=(
   systemd-networkd.service dhcpcd.service connman.service netctl.service wicd.service
   iwd.service
 )
+
+# Shared stow package planning (list + conditional-requires). Source-only.
+source "$REPO_ROOT/stow-plan.sh"
 
 yay_build_dir=""
 dry_run=false
@@ -41,6 +40,7 @@ declare -a resolved_profiles=()
 declare -a pacman_packages=()
 declare -a aur_packages=()
 declare -a stow_packages=()
+declare -a stow_all_packages=()
 declare -a optional_pacman_candidates=()
 declare -a optional_aur_candidates=()
 declare -a selected_optional_packages=()
@@ -225,14 +225,20 @@ profile_requires_multilib() {
 }
 
 build_stow_plan() {
-  stow_packages=("${STOW_PACKAGES[@]}")
+  stow_plan_all
+  stow_packages=()
   deploy_opencode=false
 
+  local name
+  for name in "${stow_all_packages[@]}"; do
+    [[ -z "${STOW_REQUIRES[$name]:-}" ]] && stow_packages+=("$name")
+  done
+
   if contains code "${resolved_profiles[@]}"; then
-    if command -v opencode >/dev/null 2>&1; then
-      stow_packages+=(opencode agents)
-      deploy_opencode=true
-    fi
+    for name in "${!STOW_REQUIRES[@]}"; do
+      stow_package_available "$name" && stow_packages+=("$name")
+    done
+    stow_package_available opencode && deploy_opencode=true
   fi
 }
 
