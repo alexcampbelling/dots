@@ -11,18 +11,22 @@ readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$REPO_ROOT/stow-plan.sh"
 
 dry_run=false
+skip_conflicts=false
 declare -a stow_packages=()
 declare -a skipped_packages=()
+declare -a conflicted_packages=()
 
 usage() {
   cat <<'EOF'
-Usage: bash ./restow.sh [--dry-run]
+Usage: bash ./restow.sh [--dry-run] [--skip-conflicts]
 
 Restows all dotfiles. No packages, services, or seeded files are touched.
 Packages whose app is not installed are skipped with a warning; install the
 app and rerun to stow them.
 
 --dry-run simulates the link changes without modifying anything.
+--skip-conflicts skips any package whose stow would conflict with an existing
+local file, instead of aborting. Rerun without it after resolving conflicts.
 EOF
 }
 
@@ -42,6 +46,10 @@ parse_args() {
         dry_run=true
         shift
         ;;
+      --skip-conflicts)
+        skip_conflicts=true
+        shift
+        ;;
       -h|--help)
         usage
         exit 0
@@ -53,11 +61,20 @@ parse_args() {
   done
 }
 
+# Loud banner for a package skipped because stowing it would conflict.
+stow_conflict_warning() {
+  local name="$1"
+  printf '\n\033[1;33m[!] SKIPPING %s\033[0m\n' "$name"
+  printf '    Stowing it would overwrite local files that are not stow-managed.\n'
+  printf '    Resolve the conflict manually or adopt the files with --adopt, then rerun.\n\n'
+}
+
 main() {
   parse_args "$@"
 
   stow_packages=()
   skipped_packages=()
+  conflicted_packages=()
   stow_plan_all
   local name
   for name in "${stow_all_packages[@]}"; do
@@ -71,9 +88,24 @@ main() {
 
   ((${#stow_packages[@]})) || die "Nothing to stow: every package was skipped"
 
-  log "Stow preflight: simulating link changes (no files will be changed)"
-  if ! stow --simulate --restow --no-folding --dir "$REPO_ROOT" --target "$HOME" "${stow_packages[@]}"; then
-    die "Stow preflight failed. Resolve the conflicts above manually, then rerun"
+  if $skip_conflicts; then
+    local -a clean_packages=()
+    log "Stow preflight: checking each package for conflicts (no files will be changed)"
+    for name in "${stow_packages[@]}"; do
+      if stow --simulate --restow --no-folding --dir "$REPO_ROOT" --target "$HOME" "$name" >/dev/null 2>&1; then
+        clean_packages+=("$name")
+      else
+        conflicted_packages+=("$name")
+        stow_conflict_warning "$name"
+      fi
+    done
+    stow_packages=("${clean_packages[@]}")
+    ((${#stow_packages[@]})) || die "Nothing to stow: every package conflicts"
+  else
+    log "Stow preflight: simulating link changes (no files will be changed)"
+    if ! stow --simulate --restow --no-folding --dir "$REPO_ROOT" --target "$HOME" "${stow_packages[@]}"; then
+      die "Stow preflight failed. Resolve the conflicts above manually, then rerun"
+    fi
   fi
 
   if $dry_run; then
@@ -84,9 +116,15 @@ main() {
   log "Stow deployment: creating or updating dotfile links in $HOME"
   stow --restow --no-folding --dir "$REPO_ROOT" --target "$HOME" "${stow_packages[@]}"
 
-  if ((${#skipped_packages[@]})); then
-    log "Skipped packages — install the missing app, then rerun to stow them"
-    printf '    %s\n' "${skipped_packages[@]}"
+  if ((${#skipped_packages[@]} || ${#conflicted_packages[@]})); then
+    ((${#skipped_packages[@]})) && {
+      log "Skipped packages — install the missing app, then rerun to stow them"
+      printf '    %s\n' "${skipped_packages[@]}"
+    }
+    ((${#conflicted_packages[@]})) && {
+      log "Skipped packages — resolve the conflict (or run with --adopt), then rerun to stow them"
+      printf '    %s\n' "${conflicted_packages[@]}"
+    }
   fi
 }
 

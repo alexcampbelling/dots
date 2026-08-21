@@ -157,7 +157,9 @@ bash ./restow.sh
 
 This stows every package. Any package whose app isn't installed on the machine
 is skipped with a warning — install that app, then rerun. `--dry-run` prints
-what would change without doing it.
+what would change without doing it. `--skip-conflicts` skips any package that
+would overwrite a local, non-stow-managed file instead of aborting; rerun
+without the flag once you resolve or adopt those files.
 
 The installer:
 - Updates the system and installs packages from the selected profiles
