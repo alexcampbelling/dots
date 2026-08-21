@@ -45,6 +45,8 @@
 @define-color color-transcribing  #ffaa00;
 @define-color color-transcribe-bg rgba(255, 170, 0, 0.15);
 @define-color color-transcribe-bd rgba(255, 170, 0, 0.3);
+@define-color color-perm-pending   #ffaa00;
+@define-color color-question       #bd93f9;
 @define-color color-special       rgba(30, 215, 96, 0.2);
 @define-color color-media-playing rgba(30, 215, 96, 0.5);
 @define-color color-media-paused  rgba(30, 215, 96, 0.3);
