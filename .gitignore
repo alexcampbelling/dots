@@ -1,6 +1,3 @@
-# Per-computer Hyprland monitor layout, seeded from monitors.conf.example.
-/hypr/.config/hypr/conf/monitors.conf
-
 # Local environment files can contain credentials and must not be committed.
 .env
 

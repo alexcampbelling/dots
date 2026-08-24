@@ -89,7 +89,7 @@ resolve_client_pid() {
 client_pid="$(resolve_client_pid "$MPID")" || client_pid=""
 
 if [ -n "$client_pid" ]; then
-  hyprctl dispatch focuswindow "pid:$client_pid" >/dev/null 2>&1
+  hyprctl dispatch "hl.dsp.focus({ window = \"pid:$client_pid\" })" >/dev/null 2>&1
 else
   printf 'opencode-perm: could not resolve a client PID for %s (plugin pid %s)\n' "$name" "$MPID" >&2
 fi

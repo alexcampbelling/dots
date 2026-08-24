@@ -10,14 +10,14 @@
             "update-active-window": true,
             "format": "{icon}",
             "icon-size": 16,
-            "on-click-window": "hyprctl dispatch focuswindow address:{address}"
+            "on-click-window": "hyprctl dispatch 'hl.dsp.focus({ window = \"address:{address}\" })'"
         }
     },
     "clock": {
         "format": "{:%H:%M | %a | %d %b}",
         "tooltip": true,
         "tooltip-format": "{calendar}",
-        "on-click": "xdg-open https://calendar.google.com && sleep 0.1 && hyprctl dispatch focuswindow class:firefox",
+        "on-click": "xdg-open https://calendar.google.com && sleep 0.1 && hyprctl dispatch 'hl.dsp.focus({ window = \"class:firefox\" })'",
         "calendar": {
           "mode": "month",
           "weeks-pos": "right",
@@ -51,7 +51,7 @@
         "interval": 1800,
         "exec": "~/.config/waybar/scripts/weather.sh",
         "return-type": "json",
-        "on-click": "xdg-open https://www.bom.gov.au/location/australia/victoria/central/o2141206946-kensington && sleep 0.1 && hyprctl dispatch focuswindow class:firefox"
+        "on-click": "xdg-open https://www.bom.gov.au/location/australia/victoria/central/o2141206946-kensington && sleep 0.1 && hyprctl dispatch 'hl.dsp.focus({ window = \"class:firefox\" })'"
     },
     "custom/opencode-perm": {
         "format": "{}",
@@ -157,7 +157,7 @@
         "exec": "~/.config/waybar/scripts/media-player.sh",
         "on-click": "playerctl play-pause -p spotify",
         "on-click-right": "playerctl play-pause -p firefox",
-        "on-click-middle": "hyprctl dispatch togglespecialworkspace && hyprctl dispatch focuswindow title:Spotify",
+        "on-click-middle": "hyprctl dispatch 'hl.dsp.workspace.toggle_special(\"\")' && hyprctl dispatch 'hl.dsp.focus({ window = \"title:Spotify\" })'",
         "interval": 1
     }
 }

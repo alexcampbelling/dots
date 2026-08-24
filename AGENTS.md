@@ -28,7 +28,7 @@ Package map (one line each):
 | Dir | What it is |
 |---|---|
 | `bash/` | `.bash_aliases` (source it from `~/.bashrc`) |
-| `hypr/` | Hyprland + hypridle/lock/paper; `conf/*.conf` are `source`d by `hyprland.conf`; scripts in `scripts/` (incl. whisper dictation) |
+| `hypr/` | Hyprland + hypridle/lock/paper; `conf/*.lua` are `require`d by `hyprland.lua` (Lua config, Hyprland ≥0.55); scripts in `scripts/` (incl. whisper dictation) |
 | `waybar/` | Waybar config (`config.jsonc`, `style.css`, `modules.json`, scripts) |
 | `dunst/`, `rofi/`, `kitty/`, `lazygit/`, `Thunar/`, `xfce4/`, `waypaper/` | Respective app configs |
 | `vicinae/` | Launcher (Super+Space); Wi-Fi chooser via `network-cli-tool: nmcli` |
@@ -88,9 +88,11 @@ Pipeline in `main()`: `parse_args` → `resolve_profiles` → `build_install_pla
 hooks/GSettings/SDDM → services. Dry-run shares the whole planning path and
 prints the plan without touching the machine.
 
+Per-machine Hyprland config is committed and keyed off the hostname:
+`hypr/.config/hypr/conf/hosts.lua` reads `/etc/hostname`; `monitors.lua` and
+`environment.lua` branch on it (see README).
+
 Seeded, per-machine files (created once, never overwritten):
-- `hypr/.config/hypr/conf/monitors.conf` — gitignored, seeded from
-  `monitors.conf.example`; edit the example for defaults
 - `~/wallpaper/pillars.jpg` — from `assets/wallpapers/pillars.jpg`
 - `~/.config/whisper/` — chmod 700; keys are created manually (see README)
 
@@ -118,8 +120,8 @@ Gotchas: never edit `/usr/share/icons/Papirus` (overwritten on updates);
 
 `.githooks/pre-push` runs gitleaks on every push (blocks secrets unless
 `GITLEAKS_FORCE=1` or typing "I understand"). `install.sh` sets
-`core.hooksPath`. Never commit secrets: `.env`/`.env.*` and `monitors.conf`
-are gitignored (`.env.example` is tracked).
+`core.hooksPath`. Never commit secrets: `.env`/`.env.*` are gitignored
+(`.env.example` is tracked).
 
 ## Skills (`agents/`)
 

@@ -1,7 +1,0 @@
-# This file is copied to the ignored local monitors.conf file on first install.
-# Run `hyprctl monitors`, then edit that local file for this computer.
-# Format: monitor = NAME, RESOLUTION@REFRESH, POSITION, SCALE
-# Example: monitor = DP-1,2560x1440@144,0x0,1
-
-# Generic fallback for a new computer. Replace it with the actual layout.
-monitor=,preferred,auto,1

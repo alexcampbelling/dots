@@ -1,3 +1,9 @@
+// todo:alex — clicking a workspace NUMBER (and workspace scrolling) is broken
+// until waybar ships the Lua-dispatch translation. waybar 0.15.0's built-in
+// click sends the old `dispatch workspace N` syntax, which Hyprland >= 0.55
+// (Lua mode) no longer parses. The fix is in waybar master (not yet released):
+// once on a waybar with it (0.15.1+ or waybar-git), verify clicking a workspace
+// number switches workspaces. Window-icon clicks (on-click-window) already work.
 {
     "layer": "top",
     "spacing": 0,

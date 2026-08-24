@@ -187,15 +187,12 @@ lspci -k
 Use the detected CPU and GPU to choose the right microcode and graphics/media
 packages from current Arch documentation.
 
-The installer creates `~/dots/hypr/.config/hypr/conf/monitors.conf` once and
-never overwrites it. After first starting Hyprland, run:
-
-```bash
-hyprctl monitors
-```
-
-Use that output to update the local monitor file with the correct names,
-resolutions, positions, and scales.
+Monitor layout is per-machine and committed. `conf/hosts.lua` reads
+`/etc/hostname`; `conf/monitors.lua` branches on it, so each machine's screens
+and workspace→monitor pinning live in one obvious place. To add a machine, add
+an `elseif host == "..."` branch there. Per-machine environment (like the
+desktop-only Firefox XWayland fix) lives in `conf/environment.lua`, also keyed
+off the hostname.
 
 ### 4. Finish setup
 

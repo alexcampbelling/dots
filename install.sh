@@ -8,8 +8,6 @@ set -Eeuo pipefail
 
 readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly PROFILE_ROOT="$REPO_ROOT/packages/profiles"
-readonly MONITOR_CONFIG="$REPO_ROOT/hypr/.config/hypr/conf/monitors.conf"
-readonly MONITOR_EXAMPLE="$REPO_ROOT/hypr/.config/hypr/conf/monitors.conf.example"
 readonly DEFAULT_WALLPAPER="$REPO_ROOT/assets/wallpapers/pillars.jpg"
 readonly SDDM_INSTALLER="$REPO_ROOT/sddm-silent/install.sh"
 readonly SDDM_DROP_IN_TEMPLATE="$REPO_ROOT/sddm-silent/configs/90-dots-silent.conf"
@@ -246,7 +244,6 @@ validate_repository_inputs() {
   local package
 
   [[ -r "$DEFAULT_WALLPAPER" ]] || die "Default wallpaper is missing: ${DEFAULT_WALLPAPER#$REPO_ROOT/}"
-  [[ -r "$MONITOR_EXAMPLE" ]] || die "Monitor example is missing: ${MONITOR_EXAMPLE#$REPO_ROOT/}"
   [[ -f "$SDDM_INSTALLER" ]] || die "SDDM theme installer is missing: ${SDDM_INSTALLER#$REPO_ROOT/}"
   [[ -r "$SDDM_DROP_IN_TEMPLATE" ]] || die "SDDM drop-in template is missing: ${SDDM_DROP_IN_TEMPLATE#$REPO_ROOT/}"
 
@@ -281,7 +278,6 @@ print_dry_run() {
   fi
 
   printf '    Wallpaper: seed ~/wallpaper/pillars.jpg only when it is missing.\n'
-  printf '    Monitors: seed the ignored hypr/.config/hypr/conf/monitors.conf only when it is missing.\n'
   printf '    Whisper: ensure ~/.config/whisper exists with owner-only permissions; API keys are never read or created.\n'
   print_package_list "Stow packages" "${stow_packages[@]}"
   if contains code "${resolved_profiles[@]}" && ! $deploy_opencode; then
@@ -496,17 +492,6 @@ seed_wallpaper() {
 
   log "Installing default wallpaper: $destination"
   install -m 644 "$DEFAULT_WALLPAPER" "$destination"
-}
-
-seed_monitor_config() {
-  [[ -r "$MONITOR_EXAMPLE" ]] || die "Monitor example is missing: ${MONITOR_EXAMPLE#$REPO_ROOT/}"
-  if [[ -e "$MONITOR_CONFIG" || -L "$MONITOR_CONFIG" ]]; then
-    log "Preserving local monitor configuration: $MONITOR_CONFIG"
-    return
-  fi
-
-  log "Seeding local monitor configuration"
-  install -m 644 "$MONITOR_EXAMPLE" "$MONITOR_CONFIG"
 }
 
 prepare_whisper_key_directory() {
@@ -745,7 +730,6 @@ main() {
   # These preserve existing per-machine files; Stow owns only the listed
   # repository directories, not every top-level directory.
   seed_wallpaper
-  seed_monitor_config
   prepare_whisper_key_directory
   deploy_configs
   configure_git_secret_hooks
