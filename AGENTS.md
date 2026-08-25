@@ -28,6 +28,7 @@ Package map (one line each):
 | Dir | What it is |
 |---|---|
 | `bash/` | `.bash_aliases` (source it from `~/.bashrc`) |
+| `zsh/` | `.zshrc` — vanilla zsh; plugins auto-installed by the `ZPLUG` loader (below) |
 | `hypr/` | Hyprland + hypridle/lock/paper; `conf/*.lua` are `require`d by `hyprland.lua` (Lua config, Hyprland ≥0.55); scripts in `scripts/` (incl. whisper dictation) |
 | `waybar/` | Waybar config (`config.jsonc`, `style.css`, `modules.json`, scripts) |
 | `dunst/`, `rofi/`, `kitty/`, `lazygit/`, `Thunar/`, `xfce4/`, `waypaper/` | Respective app configs |
@@ -39,6 +40,20 @@ Package map (one line each):
 | `assets/` | NOT stowed — wallpaper source; `wallpapers/pillars.jpg` is the default, `validate_repository_inputs` dies if missing |
 
 Repo edits apply live through the symlinks (except icons and seeded files).
+
+### Zsh plugins (the `ZPLUG` loader)
+
+`zsh/.zshrc` installs and loads its own plugins — no `install.sh`/`restow.sh`
+involvement. Plugins are declared once in the `ZPLUG=( ... )` associative array
+(`name -> GitHub URL`), auto-cloned into `~/.local/share/zsh` when missing, and
+loaded in the order that matters: completion dirs are added to `fpath` before
+`compinit`, runtime plugins are `source`d after it, and
+`zsh-syntax-highlighting` is sourced last.
+
+To add a plugin: (1) add its name + URL to `ZPLUG`, and (2) add a
+`[[ -f … ]] && source …` line (or nothing for a completions-only plugin — `fpath`
+handles it). Keep highlighting last. The loader clones but never updates; refresh
+manually with `git -C ~/.local/share/zsh/<name> pull`.
 
 ## Restowing without installing
 

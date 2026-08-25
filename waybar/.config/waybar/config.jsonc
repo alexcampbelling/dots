@@ -18,10 +18,10 @@
         "hyprland/window"
     ],
     "modules-right": [
-        "group/hardware",
-        "custom/whisper",
         "custom/opencode-perm",
         "custom/opencode-question",
+        "group/hardware",
+        "custom/whisper",
         "battery",
         "custom/weather",
         "clock"
