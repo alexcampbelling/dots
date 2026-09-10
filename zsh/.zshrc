@@ -68,6 +68,7 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias diff='diff --color=auto'
 alias ip='ip -c'
+alias oc='opencode'
 
 # --- prompt ---
 PROMPT='%F{47}%n%F{156}@%F{227}%m %F{231}%1~ > %f'

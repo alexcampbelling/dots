@@ -27,7 +27,8 @@
 /* ── Borders ────────────────────────────────────────────────────────────── */
 @define-color border-module   rgba(255, 255, 255, 0.09);
 @define-color border-hover    rgba(255, 255, 255, 0.2);
-@define-color border-active   rgba(255, 255, 255, 0.11);
+@define-color border-active   rgba(255, 255, 255, 0.4);
+/* @define-color border-active   rgba(255, 255, 255, 0.11); */
 @define-color border-warning  rgba(255, 255, 255, 0.18);
 @define-color border-critical rgba(255, 255, 255, 0.28);
 
