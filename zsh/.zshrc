@@ -1,5 +1,5 @@
 
-. "$HOME/.cargo/env"
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # PATH — same additions ~/.bashrc makes for bash
 export PATH="$HOME/.opencode/bin:$PATH"

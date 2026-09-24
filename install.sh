@@ -279,6 +279,7 @@ print_dry_run() {
 
   printf '    Wallpaper: seed ~/wallpaper/pillars.jpg only when it is missing.\n'
   printf '    Whisper: ensure ~/.config/whisper exists with owner-only permissions; API keys are never read or created.\n'
+  printf '    Login shell: set zsh as the login shell when it is not already (skipped if zsh is absent).\n'
   print_package_list "Stow packages" "${stow_packages[@]}"
   if contains code "${resolved_profiles[@]}" && ! $deploy_opencode; then
     printf '    OpenCode: skip its config and skills because opencode is not installed.\n'
@@ -556,6 +557,26 @@ configure_git_secret_hooks() {
   fi
 }
 
+set_login_shell() {
+  local login_user zsh_path current_shell
+
+  zsh_path="$(command -v zsh || true)"
+  if [[ -z "$zsh_path" ]]; then
+    printf '    Login shell: skipped because zsh is not installed\n'
+    return 0
+  fi
+
+  login_user="$(id -un)"
+  current_shell="$(getent passwd "$login_user" | cut -d: -f7 || true)"
+  if [[ "$current_shell" == "$zsh_path" ]]; then
+    log "Login shell is already $zsh_path"
+    return 0
+  fi
+
+  log "Setting the login shell for $login_user to $zsh_path"
+  sudo chsh -s "$zsh_path" "$login_user"
+}
+
 configure_gnome_dark_mode() {
   if ! command -v gsettings >/dev/null 2>&1; then
     printf '    GNOME dark mode: skipped because gsettings is unavailable\n'
@@ -733,6 +754,7 @@ main() {
   prepare_whisper_key_directory
   deploy_configs
   configure_git_secret_hooks
+  set_login_shell
   configure_gnome_dark_mode
   configure_gnome_icon_theme
 

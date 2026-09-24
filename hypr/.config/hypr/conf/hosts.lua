@@ -9,4 +9,4 @@ local f    = io.open("/etc/hostname", "r")
 local name = f and (f:read("*l") or "") or ""
 if f then f:close() end
 
-return name:gsub("%s+$", "")
+return (name:gsub("%s+$", ""))

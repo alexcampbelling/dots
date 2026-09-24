@@ -69,7 +69,7 @@ per line, `#` comments and blank lines allowed. `system` and `desktop` are
 always resolved; `optional`, `code`, `local-whisper` are opt-in via
 `--profile`. AUR entries already present in a pacman list are skipped.
 
-- `system` — every machine (core system, networking, gitleaks, tailscale)
+- `system` — every machine (core system incl. zsh, networking, gitleaks, tailscale)
 - `desktop` — every machine (Hyprland, apps, fonts)
 - `optional` — home machines; every entry is offered as an individual y/n
   prompt during install
@@ -100,8 +100,8 @@ Pipeline in `main()`: `parse_args` → `resolve_profiles` → `build_install_pla
 (reads manifests, dedupes AUR vs pacman) → `build_stow_plan` →
 `validate_repository_inputs` → optional/service prompts → installs
 (pacman `-Syu --needed`, yay installed on demand) → seeds state → stows →
-hooks/GSettings/SDDM → services. Dry-run shares the whole planning path and
-prints the plan without touching the machine.
+hooks/login shell/GSettings/SDDM → services. Dry-run shares the whole planning
+path and prints the plan without touching the machine.
 
 Per-machine Hyprland config is committed and keyed off the hostname:
 `hypr/.config/hypr/conf/hosts.lua` reads `/etc/hostname`; `monitors.lua` and
