@@ -28,7 +28,8 @@ Package map (one line each):
 | Dir | What it is |
 |---|---|
 | `bash/` | `.bash_aliases` (source it from `~/.bashrc`) |
-| `hypr/` | Hyprland + hypridle/lock/paper; `conf/*.conf` are `source`d by `hyprland.conf`; scripts in `scripts/` (incl. whisper dictation) |
+| `zsh/` | `.zshrc` — vanilla zsh; plugins auto-installed by the `ZPLUG` loader (below) |
+| `hypr/` | Hyprland + hypridle/lock/paper; `conf/*.lua` are `require`d by `hyprland.lua` (Lua config, Hyprland ≥0.55); scripts in `scripts/` (incl. whisper dictation) |
 | `waybar/` | Waybar config (`config.jsonc`, `style.css`, `modules.json`, scripts) |
 | `dunst/`, `rofi/`, `kitty/`, `lazygit/`, `Thunar/`, `xfce4/`, `waypaper/` | Respective app configs |
 | `vicinae/` | Launcher (Super+Space); Wi-Fi chooser via `network-cli-tool: nmcli` |
@@ -39,6 +40,20 @@ Package map (one line each):
 | `assets/` | NOT stowed — wallpaper source; `wallpapers/pillars.jpg` is the default, `validate_repository_inputs` dies if missing |
 
 Repo edits apply live through the symlinks (except icons and seeded files).
+
+### Zsh plugins (the `ZPLUG` loader)
+
+`zsh/.zshrc` installs and loads its own plugins — no `install.sh`/`restow.sh`
+involvement. Plugins are declared once in the `ZPLUG=( ... )` associative array
+(`name -> GitHub URL`), auto-cloned into `~/.local/share/zsh` when missing, and
+loaded in the order that matters: completion dirs are added to `fpath` before
+`compinit`, runtime plugins are `source`d after it, and
+`zsh-syntax-highlighting` is sourced last.
+
+To add a plugin: (1) add its name + URL to `ZPLUG`, and (2) add a
+`[[ -f … ]] && source …` line (or nothing for a completions-only plugin — `fpath`
+handles it). Keep highlighting last. The loader clones but never updates; refresh
+manually with `git -C ~/.local/share/zsh/<name> pull`.
 
 ## Restowing without installing
 
@@ -54,7 +69,7 @@ per line, `#` comments and blank lines allowed. `system` and `desktop` are
 always resolved; `optional`, `code`, `local-whisper` are opt-in via
 `--profile`. AUR entries already present in a pacman list are skipped.
 
-- `system` — every machine (core system, networking, gitleaks, tailscale)
+- `system` — every machine (core system incl. zsh, networking, gitleaks, tailscale)
 - `desktop` — every machine (Hyprland, apps, fonts)
 - `optional` — home machines; every entry is offered as an individual y/n
   prompt during install
@@ -85,12 +100,14 @@ Pipeline in `main()`: `parse_args` → `resolve_profiles` → `build_install_pla
 (reads manifests, dedupes AUR vs pacman) → `build_stow_plan` →
 `validate_repository_inputs` → optional/service prompts → installs
 (pacman `-Syu --needed`, yay installed on demand) → seeds state → stows →
-hooks/GSettings/SDDM → services. Dry-run shares the whole planning path and
-prints the plan without touching the machine.
+hooks/login shell/GSettings/SDDM → services. Dry-run shares the whole planning
+path and prints the plan without touching the machine.
+
+Per-machine Hyprland config is committed and keyed off the hostname:
+`hypr/.config/hypr/conf/hosts.lua` reads `/etc/hostname`; `monitors.lua` and
+`environment.lua` branch on it (see README).
 
 Seeded, per-machine files (created once, never overwritten):
-- `hypr/.config/hypr/conf/monitors.conf` — gitignored, seeded from
-  `monitors.conf.example`; edit the example for defaults
 - `~/wallpaper/pillars.jpg` — from `assets/wallpapers/pillars.jpg`
 - `~/.config/whisper/` — chmod 700; keys are created manually (see README)
 
@@ -118,8 +135,8 @@ Gotchas: never edit `/usr/share/icons/Papirus` (overwritten on updates);
 
 `.githooks/pre-push` runs gitleaks on every push (blocks secrets unless
 `GITLEAKS_FORCE=1` or typing "I understand"). `install.sh` sets
-`core.hooksPath`. Never commit secrets: `.env`/`.env.*` and `monitors.conf`
-are gitignored (`.env.example` is tracked).
+`core.hooksPath`. Never commit secrets: `.env`/`.env.*` are gitignored
+(`.env.example` is tracked).
 
 ## Skills (`agents/`)
 

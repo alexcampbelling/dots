@@ -18,6 +18,8 @@ nano
 less
 lsof
 7zip
+# Login shell for the stowed zsh/.zshrc; kitty also hardcodes /usr/bin/zsh.
+zsh
 tailscale
 # Secret scanner used by the .githooks/pre-push hook.
 gitleaks

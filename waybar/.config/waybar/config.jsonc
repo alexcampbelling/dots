@@ -1,3 +1,7 @@
+// Known issue: workspace-number clicks do nothing on waybar 0.15.0 (Arch extra)
+// — its built-in click sends the old `dispatch workspace N`, which Hyprland
+// >= 0.55 (Lua mode) ignores. Fixed in waybar master; drop this note once Arch
+// ships 0.15.1+. Window-icon clicks (on-click-window) already work.
 {
     "layer": "top",
     "spacing": 0,
@@ -12,10 +16,10 @@
         "hyprland/window"
     ],
     "modules-right": [
-        "group/hardware",
-        "custom/whisper",
         "custom/opencode-perm",
         "custom/opencode-question",
+        "group/hardware",
+        "custom/whisper",
         "battery",
         "custom/weather",
         "clock"

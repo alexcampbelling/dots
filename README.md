@@ -165,9 +165,10 @@ The installer:
 - Updates the system and installs packages from the selected profiles
 - Installs Yay when AUR packages are required
 - Deploys dotfiles to the home directory with Stow
+- Sets zsh as the login shell once the `system` profile installs it
 - Enables the gitleaks pre-push hook (`.githooks/pre-push`) so git pushes are
   scanned for secrets before they reach GitHub
-- Sets up Hyprland
+- Sets up Hyprland (Lua configs require Hyprland ≥ 0.55; the current Arch package)
 - Sets the GNOME/GTK4 colour preference to dark for Text Editor and similar apps
 - Automatically selects the SilentSDDM theme when safe to do so
 - Asks before enabling NetworkManager, Bluetooth, UFW, CUPS, Avahi, Tailscale,
@@ -187,15 +188,13 @@ lspci -k
 Use the detected CPU and GPU to choose the right microcode and graphics/media
 packages from current Arch documentation.
 
-The installer creates `~/dots/hypr/.config/hypr/conf/monitors.conf` once and
-never overwrites it. After first starting Hyprland, run:
-
-```bash
-hyprctl monitors
-```
-
-Use that output to update the local monitor file with the correct names,
-resolutions, positions, and scales.
+Monitor layout is per-machine and committed. `conf/hosts.lua` reads
+`/etc/hostname`; `conf/monitors.lua` branches on it, so each machine's screens
+and workspace→monitor pinning live in one obvious place. To add a machine, add
+an `elseif host == "..."` branch there. Per-machine environment (like the
+desktop-only Firefox XWayland fix) lives in `conf/environment.lua`, also keyed
+off the hostname. Hyprland loads `hyprland.lua` and the `conf/*.lua` files it
+requires, so Hyprland ≥ 0.55 is required.
 
 ### 4. Finish setup
 

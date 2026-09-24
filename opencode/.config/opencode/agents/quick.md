@@ -1,8 +1,9 @@
 ---
 description: Fast, concise answers for simple questions. No code editing.
 mode: primary
-model: opencode-go/deepseek-v4-flash
-variant: none
+model: opencode-go/deepseek-v4.1-flash
+variant: low
+temperature: 0.2
 color: "#FF5733"
 permission:
   edit: deny
