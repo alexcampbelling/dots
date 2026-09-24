@@ -116,7 +116,15 @@ fi
 echo "[$(date -Iseconds)] Recording started (mic: $MIC, backend: $BACKEND)" >> "$LOG"
 echo "recording" > "$STATE_FILE"
 
-parec --device="$MIC" --format=s16le --rate=16000 --channels=1 > "$RECORDING" 2>>"$LOG" &
+# Native PipeWire capture (pw-record): goes straight through PipeWire's own
+# protocol. Replaces `parec`, which negotiated a PulseAudio-compat shm
+# stream through pipewire-pulse first — that extra layer does its own
+# memfd/SCM_RIGHTS passing. Fewer fd transports = fewer in-flight fds.
+if [ "$MIC" = "@DEFAULT_SOURCE@" ]; then
+    pw-record --format=s16 --rate=16000 --channels=1 "$RECORDING" 2>>"$LOG" &
+else
+    pw-record --target="$MIC" --format=s16 --rate=16000 --channels=1 "$RECORDING" 2>>"$LOG" &
+fi
 RECORD_PID=$!
 echo "$RECORD_PID" > "$PIDFILE"
 

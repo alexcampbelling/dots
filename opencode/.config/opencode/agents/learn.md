@@ -1,7 +1,8 @@
 ---
 description: Explains concepts in concise, scannable bullet points. Use when you want to learn or understand a topic fast.
 mode: primary
-model: opencode-go/deepseek-v4-flash
+model: opencode-go/deepseek-v4.1-flash
+variant: low
 temperature: 0.4
 color: "#22d3ee"
 permission:

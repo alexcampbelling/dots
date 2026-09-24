@@ -8,7 +8,7 @@ permission:
     "*": allow
   external_directory:
     "*": allow
-  todo: allow
+  todowrite: allow
   task:
     "*": allow
   question: deny
