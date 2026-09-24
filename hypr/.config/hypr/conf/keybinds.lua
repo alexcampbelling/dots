@@ -28,7 +28,7 @@ hl.bind(mainMod .. " + SPACE",  hl.dsp.exec_cmd(menu))
 
 -- Windows
 -- Dwindle layout split controls
-hl.bind(mainMod .. " + Q", hl.dsp.window.kill())
+hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "fullscreen" })) -- todo:alex check — was "fullscreen, 0"
 hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
