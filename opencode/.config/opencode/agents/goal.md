@@ -20,6 +20,7 @@ permission:
     "git cherry-pick*": deny
     "git rm*": deny
   task:
+    "*": deny
     explore: allow
     architect: allow
     coder: allow

@@ -33,6 +33,7 @@ enable_avahi=false
 enable_sddm=false
 enable_tailscale=false
 enable_syncthing=false
+enable_ydotool=false
 declare -a requested_profiles=()
 declare -a resolved_profiles=()
 declare -a pacman_packages=()
@@ -294,7 +295,7 @@ print_dry_run() {
   if $skip_services; then
     printf '    Services: skipped; no services or boot target will be changed.\n'
   else
-    printf '    Services: a real install asks before enabling NetworkManager, Bluetooth, UFW, CUPS, Avahi, Tailscale, or SDDM with graphical boot.\n'
+    printf '    Services: a real install asks before enabling NetworkManager, Bluetooth, UFW, CUPS, Avahi, Tailscale, SDDM with graphical boot, or the Syncthing and ydotoold user services.\n'
   fi
   if $optional_profile_requested; then
     print_package_list "Optional Pacman candidates (not selected in dry run)" "${optional_pacman_candidates[@]}"
@@ -393,6 +394,13 @@ collect_service_choices() {
       "Enable Syncthing for this user?" \
       "Enables the Syncthing user service for future logins. Device pairing and folder setup remain manual." \
       && enable_syncthing=true
+  fi
+
+  if contains ydotool "${pacman_packages[@]}"; then
+    prompt_yes_no \
+      "Enable ydotoold for this user?" \
+      "Enables the ydotool user service so voice dictation can type into any window, including Chromium, Firefox, and X11 apps." \
+      && enable_ydotool=true
   fi
 
   return 0
@@ -686,6 +694,7 @@ configure_services() {
   $enable_avahi && ensure_service_enabled avahi-daemon.service
   $enable_tailscale && ensure_service_enabled tailscaled.service
   $enable_syncthing && ensure_user_service_enabled syncthing.service
+  $enable_ydotool && ensure_user_service_enabled ydotool.service
 
   if $enable_sddm; then
     ensure_service_enabled sddm.service
@@ -704,8 +713,8 @@ print_summary() {
   if $skip_services; then
     printf '    Services: unchanged (--skip-services).\n'
   else
-    printf '    Services: NetworkManager=%s, Bluetooth=%s, UFW=%s, CUPS=%s, Avahi=%s, Tailscale=%s, SDDM+graphical.target=%s, Syncthing=%s\n' \
-      "$enable_networkmanager" "$enable_bluetooth" "$enable_ufw" "$enable_cups" "$enable_avahi" "$enable_tailscale" "$enable_sddm" "$enable_syncthing"
+    printf '    Services: NetworkManager=%s, Bluetooth=%s, UFW=%s, CUPS=%s, Avahi=%s, Tailscale=%s, SDDM+graphical.target=%s, Syncthing=%s, ydotoold=%s\n' \
+      "$enable_networkmanager" "$enable_bluetooth" "$enable_ufw" "$enable_cups" "$enable_avahi" "$enable_tailscale" "$enable_sddm" "$enable_syncthing" "$enable_ydotool"
   fi
   printf '    PipeWire and WirePlumber start in your graphical user session.\n'
   printf '    Check README.md for hardware-driver and monitor-layout setup.\n'

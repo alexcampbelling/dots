@@ -14,6 +14,17 @@ LOG="$STATE_DIR/whisper.log"
 MIC="@DEFAULT_SOURCE@"
 BACKEND_FILE="$STATE_DIR/backend"
 
+# Waybar's custom/whisper module uses "signal": 9, so every state change must
+# poke it to re-run whisper-status.sh (otherwise the icon waits up to 1s).
+refresh_waybar() {
+    pkill -RTMIN+9 -x waybar 2>/dev/null || true
+}
+
+set_state() {
+    printf '%s\n' "$1" > "$STATE_FILE"
+    refresh_waybar
+}
+
 BACKEND="${WHISPER_BACKEND:-cloud}"
 if [ -f "$BACKEND_FILE" ]; then
     BACKEND=$(cat "$BACKEND_FILE")
@@ -27,7 +38,7 @@ local_whisper_ready() {
 
 if [ "$BACKEND" = "local" ] && ! local_whisper_ready; then
     echo "[$(date -Iseconds)] ERROR: Local Whisper is not configured" >> "$LOG"
-    echo "error" > "$STATE_FILE"
+    set_state error
     echo "cloud" > "$BACKEND_FILE"
     notify-send -t 7000 "Whisper local mode unavailable" \
         "Run install.sh with --profile local-whisper, then download the tiny.en model to ~/.local/share/whisper-models/. Switched back to cloud mode." \
@@ -39,21 +50,29 @@ fi
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
     RECORD_PID=$(cat "$PIDFILE")
 
-    # Keep recording 0.8s longer to catch audio tail in PipeWire pipeline.
-    # State stays "recording" (red mic visible) during the buffer.
-    sleep 0.8
+    # The user has stopped, so show the transcribing spinner right away.
+    set_state transcribing
 
-    echo "transcribing" > "$STATE_FILE"
+    # Keep recording briefly longer to catch the audio tail still in the
+    # PipeWire pipeline; 0.3s was verified not to clip the last word.
+    sleep 0.3
+
     kill "$RECORD_PID" 2>/dev/null || true
     rm -f "$PIDFILE"
-    sleep 0.2
+    # Wait for pw-record to exit and close the file instead of a fixed 0.2s
+    # sleep; it normally exits within a few milliseconds. The loop caps the
+    # wait at 0.5s in case it ignores SIGTERM.
+    for _ in {1..50}; do
+        kill -0 "$RECORD_PID" 2>/dev/null || break
+        sleep 0.01
+    done
 
     echo "[$(date -Iseconds)] Stopped recording (backend: $BACKEND)" >> "$LOG"
 
     if [ ! -s "$RECORDING" ]; then
         echo "[$(date -Iseconds)] WARNING: No audio captured" >> "$LOG"
         rm -f "$RECORDING"
-        echo "idle" > "$STATE_FILE"
+        set_state idle
         exit 0
     fi
 
@@ -65,7 +84,7 @@ if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
     if ! ffmpeg -y -f s16le -ar 16000 -ac 1 -i "$RECORDING" "$WAV" 2>>"$LOG"; then
         echo "[$(date -Iseconds)] ERROR: Failed to convert recording" >> "$LOG"
         rm -f "$RECORDING" "$WAV"
-        echo "error" > "$STATE_FILE"
+        set_state error
         exit 1
     fi
     rm -f "$RECORDING"
@@ -74,21 +93,21 @@ if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
         cloud)
             if ! RESULT=$("$HOME/.config/hypr/scripts/whisper-cloud.sh" "$WAV"); then
                 rm -f "$WAV"
-                echo "error" > "$STATE_FILE"
+                set_state error
                 exit 1
             fi
             ;;
         local)
             if ! RESULT=$(whisper-cli -m "$LOCAL_MODEL" -f "$WAV" --no-timestamps --language en 2>>"$LOG"); then
                 rm -f "$WAV"
-                echo "error" > "$STATE_FILE"
+                set_state error
                 notify-send -t 5000 "Whisper local mode failed" "Check the local model and whisper.cpp installation." --icon=dialog-error
                 exit 1
             fi
             ;;
         *)
             rm -f "$WAV"
-            echo "error" > "$STATE_FILE"
+            set_state error
             notify-send -t 5000 "Whisper backend error" "Unknown backend: $BACKEND" --icon=dialog-error
             exit 1
             ;;
@@ -100,10 +119,17 @@ if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
     echo "[$(date -Iseconds)] Transcription: ${RESULT:-<empty>}" >> "$LOG"
 
     if [ -n "$RESULT" ]; then
-        echo -n "$RESULT" | wtype -
+        # ydotool injects through uinput, so every client (Chromium, Firefox,
+        # X11, terminals) receives real key events. wtype is the fallback for
+        # machines where the ydotool daemon is not available.
+        if command -v ydotool >/dev/null 2>&1; then
+            printf '%s' "$RESULT" | ydotool type -H 2 -d 2 -f -
+        else
+            printf '%s' "$RESULT" | wtype -
+        fi
     fi
 
-    echo "idle" > "$STATE_FILE"
+    set_state idle
     exit 0
 fi
 
@@ -114,7 +140,7 @@ if [ -f "$PIDFILE" ]; then
 fi
 
 echo "[$(date -Iseconds)] Recording started (mic: $MIC, backend: $BACKEND)" >> "$LOG"
-echo "recording" > "$STATE_FILE"
+set_state recording
 
 # Native PipeWire capture (pw-record): goes straight through PipeWire's own
 # protocol. Replaces `parec`, which negotiated a PulseAudio-compat shm
@@ -130,7 +156,7 @@ echo "$RECORD_PID" > "$PIDFILE"
 
 sleep 0.1
 if ! kill -0 "$RECORD_PID" 2>/dev/null; then
-    echo "error" > "$STATE_FILE"
+    set_state error
     echo "[$(date -Iseconds)] ERROR: Recording failed to start" >> "$LOG"
     exit 1
 fi

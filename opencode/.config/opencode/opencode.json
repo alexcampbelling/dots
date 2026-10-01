@@ -22,6 +22,9 @@
       "git rm*": "deny"
     }
   },
+  "experimental": {
+    "disable_paste_summary": true
+  },
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
@@ -47,7 +50,10 @@
   },
   "agent": {
     "build": {
-      "color": "secondary"
+      "color": "secondary",
+      "permission": {
+        "task": { "*": "allow", "yolo": "deny" }
+      }
     },
     "plan": {
       "color": "warning",

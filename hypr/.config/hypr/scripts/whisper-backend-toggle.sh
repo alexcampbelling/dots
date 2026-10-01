@@ -19,3 +19,6 @@ else
     echo "cloud" > "$BACKEND_FILE"
     notify-send -t 2000 "Whisper" "Backend: cloud (Groq)" --icon=audio-input-microphone
 fi
+
+# Waybar's custom/whisper module is signal-driven; refresh its tooltip now.
+pkill -RTMIN+9 -x waybar 2>/dev/null || true

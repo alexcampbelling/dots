@@ -21,3 +21,4 @@ __pycache__/
 
 # macOS Finder metadata is local machine state.
 .DS_Store
+/Thunar/.config/Thunar/accels.scm

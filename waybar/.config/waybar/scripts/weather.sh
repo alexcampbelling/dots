@@ -8,6 +8,7 @@ command -v python3 >/dev/null 2>&1 || {
 }
 exec python3 - "$@" <<'PY'
 import json
+import math
 import re
 import sys
 import time
@@ -94,6 +95,31 @@ def css_class_from_descriptor(key: str) -> str:
     return "bom-{}".format(slug if slug else "unknown")
 
 
+def dew_point_c(temp_c: float, humidity_pct: float) -> Optional[float]:
+    """Dew point via Magnus formula (Alduchov & Eskridge constants, over water)."""
+    if humidity_pct is None or humidity_pct <= 0:
+        return None
+    rh = min(max(float(humidity_pct), 1.0), 100.0)
+    a, b = 17.62, 243.12
+    gamma = math.log(rh / 100.0) + (a * temp_c) / (b + temp_c)
+    return (b * gamma) / (a - gamma)
+
+
+def drying_verdict(dp_c: float) -> str:
+    """Clothes-drying outlook keyed off dew point."""
+    if dp_c < 5:
+        return "👕 out — fastest drying"
+    if dp_c < 10:
+        return "👕 out — excellent drying"
+    if dp_c < 13:
+        return "👕 out — good drying"
+    if dp_c < 16:
+        return "👕 out — slow drying"
+    if dp_c < 20:
+        return "🏠 in — poor outside"
+    return "🏠 in — drying stops outside"
+
+
 try:
     obs_body = get_json_retry("observations")
 except (OSError, urllib.error.HTTPError, urllib.error.URLError, json.JSONDecodeError) as e:
@@ -115,6 +141,14 @@ uv = day0.get("uv") or {}
 uv_line = ""
 if isinstance(uv, dict) and uv.get("max_index") is not None:
     uv_line = "UV (today): {} ({})".format(uv["max_index"], uv.get("category") or "—")
+
+dew_line = ""
+try:
+    dp = dew_point_c(float(o["temp"]), float(o.get("humidity")))
+except (TypeError, ValueError):
+    dp = None
+if dp is not None:
+    dew_line = "Dew point: {:.1f}°C ({})".format(dp, drying_verdict(dp))
 
 st = o.get("station") or {}
 st_name = st.get("name", "?")
@@ -145,6 +179,9 @@ tooltip_lines.extend(
     "Station: {}".format(st_line),
     "Now: {:.1f}°C (feels {:.1f}°C)".format(float(o["temp"]), float(o.get("temp_feels_like", o["temp"]))),
     "Humidity: {}%".format(o.get("humidity", "?")),
+    ]
+    + ([dew_line] if dew_line else [])
+    + [
     "Wind: {} km/h {}".format(wind.get("speed_kilometre", "?"), wind.get("direction", "")),
     "Gust: {} km/h".format(gust.get("speed_kilometre", "?")),
     "Rain since 9am: {} mm".format(o.get("rain_since_9am", "?")),

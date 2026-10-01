@@ -65,6 +65,7 @@ timeshift
 waybar
 wl-clipboard
 wtype
+ydotool
 imagemagick
 ffmpeg
 libnotify

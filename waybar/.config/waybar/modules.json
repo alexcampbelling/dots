@@ -39,6 +39,7 @@
         "format": "{}",
         "return-type": "json",
         "interval": 1,
+        "signal": 9,
         "exec": "~/.config/hypr/scripts/whisper-status.sh",
         "on-click": "~/.config/hypr/scripts/whisper-toggle.sh",
         "on-click-right": "~/.config/hypr/scripts/whisper-backend-toggle.sh",
