@@ -122,10 +122,17 @@ if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
         # ydotool injects through uinput, so every client (Chromium, Firefox,
         # X11, terminals) receives real key events. wtype is the fallback for
         # machines where the ydotool daemon is not available.
-        if command -v ydotool >/dev/null 2>&1; then
-            printf '%s' "$RESULT" | ydotool type -H 2 -d 2 -f -
+        if command -v ydotool >/dev/null 2>&1 \
+            && printf '%s' "$RESULT" | ydotool type -H 2 -d 2 -f -; then
+            :
+        elif command -v wtype >/dev/null 2>&1 \
+            && printf '%s' "$RESULT" | wtype -; then
+            :
         else
-            printf '%s' "$RESULT" | wtype -
+            echo "[$(date -Iseconds)] ERROR: Both ydotool and wtype failed to type the transcription" >> "$LOG"
+            notify-send -t 5000 "Whisper dictation" "Transcription succeeded, but no typing backend worked. Is ydotoold running?" --icon=dialog-error || true
+            set_state error
+            exit 1
         fi
     fi
 
