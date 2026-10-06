@@ -71,7 +71,13 @@ alias ip='ip -c'
 alias oc='opencode'
 
 # --- prompt ---
-PROMPT='%F{47}%n%F{156}@%F{227}%m %F{231}%1~ > %f'
+#PROMPT='%F{47}%n%F{156}@%F{227}%m %F{231}%1~ > %f'
+case "${HOST%%.*}" in
+  starch) prompt_colors=(39 81 77 226)    ;;  # blue -> light blue -> green -> yellow
+  pcarch) prompt_colors=(39 45 51 195)    ;;  # blue -> cyan -> aqua -> pale cyan
+  *)      prompt_colors=(47 156 227 231)  ;;  # laparch / default: green -> yellow (unchanged)
+esac
+PROMPT="%F{${prompt_colors[1]}}%n%F{${prompt_colors[2]}}@%F{${prompt_colors[3]}}%m %F{${prompt_colors[4]}}%1~ > %f"
 
 # --- syntax highlighting LAST ---
 [[ -f "$ZPLUG_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] \
