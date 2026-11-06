@@ -105,19 +105,36 @@ def dew_point_c(temp_c: float, humidity_pct: float) -> Optional[float]:
     return (b * gamma) / (a - gamma)
 
 
-def drying_verdict(dp_c: float) -> str:
-    """Clothes-drying outlook keyed off dew point."""
-    if dp_c < 5:
-        return "👕 out — fastest drying"
-    if dp_c < 10:
-        return "👕 out — excellent drying"
-    if dp_c < 13:
-        return "👕 out — good drying"
-    if dp_c < 16:
+def saturation_vapour_pressure_kpa(temp_c: float) -> float:
+    """Saturation vapour pressure over water (kPa), same Magnus constants as dew_point_c."""
+    a, b = 17.62, 243.12
+    return 0.6112 * math.exp((a * temp_c) / (b + temp_c))
+
+
+def vpd_kpa(temp_c: float, dp_c: float) -> float:
+    """Vapour pressure deficit: how much more moisture the air can absorb (kPa)."""
+    return saturation_vapour_pressure_kpa(temp_c) - saturation_vapour_pressure_kpa(dp_c)
+
+
+def drying_verdict(temp_c: float, dp_c: float) -> str:
+    """Clothes-drying outlook from vapour pressure deficit (the actual evaporation driver).
+
+    Dew point alone only says how much moisture the air holds, not how much more it
+    can take. Saturated dawn air (T ≈ Td) has VPD ≈ 0 and dries nothing, even though
+    a 7 °C dew point looks "low" in absolute terms.
+    """
+    vpd = vpd_kpa(temp_c, dp_c)
+    if vpd < 0.2:
+        return "🏠 in — air saturated, no drying"
+    if vpd < 0.5:
+        return "🏠 in — barely drying"
+    if vpd < 0.8:
         return "👕 out — slow drying"
-    if dp_c < 20:
-        return "🏠 in — poor outside"
-    return "🏠 in — drying stops outside"
+    if vpd < 1.2:
+        return "👕 out — good drying"
+    if vpd < 1.6:
+        return "👕 out — excellent drying"
+    return "👕 out — fastest drying"
 
 
 try:
@@ -148,7 +165,10 @@ try:
 except (TypeError, ValueError):
     dp = None
 if dp is not None:
-    dew_line = "Dew point: {:.1f}°C ({})".format(dp, drying_verdict(dp))
+    t_now = float(o["temp"])
+    dew_line = "Dew point: {:.1f}°C · VPD {:.2f} kPa ({})".format(
+        dp, vpd_kpa(t_now, dp), drying_verdict(t_now, dp)
+    )
 
 st = o.get("station") or {}
 st_name = st.get("name", "?")
